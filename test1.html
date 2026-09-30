@@ -1,0 +1,1033 @@
+er<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash App Unified Generator Pro (iOS 16+ Engine)</title>
+    <!-- html2canvas for canvas screenshot export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #121212;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            color: #ffffff;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 15px;
+            gap: 40px;
+            min-height: 100vh;
+        }
+
+        /* --- Control Panel Form --- */
+        .control-panel {
+            background-color: #1e1e1e;
+            padding: 24px;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border: 1px solid #333;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .control-panel h2 {
+            font-size: 16px;
+            font-weight: 700;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+            color: #00d632;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+        
+        .control-panel h2:first-child { margin-top: 0; }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .control-panel input, .control-panel select {
+            padding: 10px;
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.2s ease, background-color 0.2s ease;
+        }
+
+        .control-panel input:focus, .control-panel select:focus {
+            border: 1px solid #00d632;
+            outline: none;
+            background-color: #333;
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        .drop-zone {
+            border: 2px dashed #444;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            background: #252525;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .drop-zone.dragover {
+            border-color: #00d632;
+            background: #1a3320;
+        }
+        .drop-zone p {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .btn-action {
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: filter 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-action:hover { filter: brightness(1.1); }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-download-1 { background-color: #00d632; color: #000; margin-top: 10px;}
+        .btn-download-2 { background-color: #e26e38; color: #fff; }
+        .btn-download-all { background-color: #af52de; color: #fff; font-size: 15px; padding: 14px; }
+
+        .section-box {
+            border: 1px solid #3a3a3a;
+            padding: 12px;
+            border-radius: 8px;
+            background-color: #242424;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .section-box h3 { font-size: 13px; color: #fff; font-weight: 600; }
+
+        .row-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        /* --- Screen Previews Container --- */
+        .previews {
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* --- Shared Phone Styles --- */
+        .phone-screen {
+            width: 412px;
+            background-color: #000000;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            user-select: none;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            padding: 14px 25px 12px 25px;
+            color: #fff;
+            width: 100%;
+        }
+
+        .status-icons { display: flex; align-items: center; gap: 6px; }
+        .network-text { font-size: 13px; font-weight: 700; color: #fff; margin-right: 2px; }
+        .wifi-icon { display: none; margin-right: 2px; }
+
+        /* --- Screen 1: Transfer Success Specifics --- */
+        .screen-success { height: 680px; justify-content: space-between; }
+        .success-content { padding: 0 25px 16px 25px; display: flex; flex-direction: column; flex: 1;}
+        .header-top { display: flex; align-items: center; margin-top: 10px; }
+        .close-icon { cursor: pointer; }
+        .middle-content { display: flex; flex-direction: column; margin-top: 24px; }
+        
+        .green-circle {
+            background-color: #00D632;
+            color: #000;
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 20px;
+        }
+        .green-circle svg { width: 28px; height: 28px; stroke-width: 3; stroke: #000; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        
+        .transfer-message { font-size: 30px; font-weight: 600; line-height: 1.15; margin: 0; letter-spacing: -0.5px; }
+        
+        .button-container { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 22px; padding: 0 25px;}
+        .app-btn { font-size: 16px; font-weight: 600; padding: 16px; border-radius: 30px; border: none; width: 100%; cursor: pointer; }
+        .receipt-btn { background-color: #1c1c1e; color: #ffffff; }
+        .done-btn { background-color: #ffffff; color: #000000; }
+        .home-indicator { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 135px; height: 5px; background-color: #ffffff; border-radius: 10px; }
+
+        /* --- Screen 2: History Activity Specifics --- */
+        .screen-history { height: 870px; }
+        
+        .header-main { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px 20px 20px; }
+        .header-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        
+        .icon-circle-btn {
+            width: 40px; height: 40px; border-radius: 50%; background-color: #222224;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .profile-circle-btn { background-color: #f05d52; }
+
+        .activity-list { display: flex; flex-direction: column; gap: 22px; overflow-y: hidden; padding: 0 20px 20px 20px; }
+        .section-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.3px; }
+
+        .tx-item { display: flex; align-items: flex-start; justify-content: space-between; }
+        .tx-left { display: flex; align-items: center; gap: 16px; }
+        
+        /* --- Profile Picture Precise Styling & Sharp Rendering --- */
+        .avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-weight: 500; font-size: 24px; color: #000;
+            background-color: #e26e38;
+            overflow: hidden; flex-shrink: 0;
+            transform: translateZ(0); /* Hardware acceleration layer */
+        }
+        
+        /* Ultra-HD Sharp Profile Picture Setting */
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+        }
+
+        .tx-details { display: flex; flex-direction: column; gap: 4px; justify-content: center; margin-top: 2px; }
+        .tx-name { font-size: 17px; font-weight: 600; color: #ffffff; letter-spacing: -0.2px; line-height: 1.1; }
+        .tx-subtext, .tx-fee, .clearance-fee-text { font-size: 15px; font-weight: 400; line-height: 1.2; }
+        .tx-subtext { color: #ffffff; }
+        .tx-fee { color: #e0e0e0; font-size: 14px; }
+        .tx-status { font-size: 14px; color: #a0a0a0; font-weight: 400; line-height: 1.2; }
+        .tx-amount { font-size: 17px; font-weight: 600; color: #ffffff; text-align: right; margin-top: 2px; letter-spacing: -0.2px; text-decoration: none !important; }
+        
+        .received-solid-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .received-solid-circle {
+            flex-shrink: 0;
+            display: block;
+        }
+
+        .bottom-nav-container {
+            position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 40px); display: flex; justify-content: center; z-index: 10;
+        }
+        .bottom-nav {
+            background-color: #000000; border-radius: 40px; padding: 6px 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.9); border: 1px solid #1a1a1a;
+        }
+        .nav-item { flex: 1; display: flex; justify-content: center; align-items: center; height: 48px; }
+        .nav-balance { font-size: 17px; font-weight: 700; color: #8e8e93; }
+        .nav-dollar { font-size: 24px; font-weight: 700; color: #8e8e93; }
+        .nav-active-pill {
+            background-color: #1c1c1e; border-radius: 30px; height: 48px; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* --- Native iOS Battery & Wi-Fi Styling --- */
+        .battery-icon {
+            width: 25px; height: 12px; border: 1.5px solid #fff; border-radius: 4px;
+            padding: 1px; display: flex; align-items: center; position: relative;
+        }
+        .battery-fill { height: 100%; background-color: #fff; border-radius: 1px; width: 100%; }
+        .battery-tip {
+            width: 2px; height: 5px; background-color: #fff; position: absolute;
+            right: -4px; top: 2px; border-radius: 0 1px 1px 0;
+        }
+
+        @media (max-width: 1000px) {
+            body { flex-direction: column; align-items: center; }
+            .previews { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CONTROL PANEL -->
+    <div class="control-panel" id="controlPanel">
+        <h2>Global Settings</h2>
+
+        <div class="input-group">
+            <label>Recipient Name</label>
+            <input type="text" id="inputName" value="Jeffrey Clark">
+        </div>
+
+        <div class="input-group">
+            <label>Transfer Amount</label>
+            <input type="text" id="inputAmount" value="$5,010.00">
+        </div>
+
+        <div class="input-group">
+            <label>Purpose Note</label>
+            <input type="text" id="inputPurpose" value="Allowance 💙💙">
+        </div>
+        
+        <div class="input-group">
+            <label>Profile Picture (Auto-HD Enhancer)</label>
+            <div class="drop-zone" id="avatarDropZone">
+                <p>📷 Drag & Drop image here, click to upload, or press <strong>Ctrl+V / Cmd+V</strong></p>
+                <input type="file" id="inputAvatar" accept="image/*" style="display: none;">
+            </div>
+        </div>
+
+        <div class="row-inputs">
+            <div class="input-group">
+                <label>Time Engine Mode</label>
+                <select id="timeMode" onchange="toggleManualTime()">
+                    <option value="auto">Auto Sync System</option>
+                    <option value="manual">Manual Entry</option>
+                </select>
+            </div>
+            <div class="input-group" id="manualTimeGroup" style="display: none;">
+                <label>Manual Phone Time</label>
+                <input type="text" id="inputTime" value="2:54 PM">
+            </div>
+        </div>
+        
+        <div class="row-inputs">
+            <div class="input-group">
+                <label>Base Date</label>
+                <input type="date" id="inputBaseDate">
+            </div>
+            <div class="input-group">
+                <label>Network Signal</label>
+                <select id="inputNetwork">
+                    <option value="5G">5G</option>
+                    <option value="LTE">LTE</option>
+                    <option value="Wi-Fi">Wi-Fi</option>
+                </select>
+            </div>
+        </div>
+
+        <h2>Success Screen Tweaks</h2>
+        <div class="row-inputs">
+            <div class="input-group">
+                <label>Action</label>
+                <input type="text" id="inputAction" value="sent">
+            </div>
+            <div class="input-group">
+                <label>Preposition</label>
+                <input type="text" id="inputPrep" value="to">
+            </div>
+        </div>
+
+        <h2>History Screen Tweaks</h2>
+        <div class="row-inputs">
+            <div class="input-group">
+                <label>Clearance Fee</label>
+                <input type="text" id="inputClearance" value="Clearance fee: $100">
+            </div>
+            <div class="input-group">
+                <label>Nav Balance</label>
+                <input type="text" id="inputNavBalance" value="35.5k">
+            </div>
+        </div>
+
+        <!-- Editable Transactions List -->
+        <h2>Transactions Manager</h2>
+
+        <div class="section-box">
+            <h3>Completed Tx 1</h3>
+            <div class="row-inputs">
+                <input type="text" id="t1Name" value="crd Lee" placeholder="Name">
+                <input type="text" id="t1Amount" value="+ $10,000" placeholder="Amount">
+            </div>
+            <div class="row-inputs">
+                <input type="text" id="t1Date" value="Sep 24, 2026" placeholder="Date/Status">
+                <input type="text" id="t1Sub" value="Received" placeholder="Subtext">
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h3>Completed Tx 2</h3>
+            <div class="row-inputs">
+                <input type="text" id="t2Name" value="Timothy Crutcher" placeholder="Name">
+                <input type="text" id="t2Amount" value="$8,500" placeholder="Amount">
+            </div>
+            <div class="row-inputs">
+                <input type="text" id="t2Date" value="Sep 22, 2026" placeholder="Date/Status">
+                <input type="text" id="t2Fee" value="Fee : $215.00" placeholder="Fee Text">
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h3>Completed Tx 3</h3>
+            <div class="row-inputs">
+                <input type="text" id="t3Name" value="Tommy Randolph" placeholder="Name">
+                <input type="text" id="t3Amount" value="$7,500" placeholder="Amount">
+            </div>
+            <div class="row-inputs">
+                <input type="text" id="t3Fee" value="Fee : $100.00" placeholder="Fee/Subtext">
+                <input type="text" id="t3Sub" value="💙" placeholder="Icon/Note">
+            </div>
+        </div>
+
+        <button class="btn-action btn-download-1" onclick="downloadSingleImage('successNode', 'CashApp_Success.png')">↓ Download Success Image</button>
+        <button class="btn-action btn-download-2" onclick="downloadSingleImage('historyNode', 'CashApp_History.png')">↓ Download Activity Image</button>
+        <button class="btn-action btn-download-all" id="btnDownloadAll" onclick="downloadAllImages()">⚡ Download Both (Batch Safe)</button>
+    </div>
+
+    <!-- APP PREVIEWS -->
+    <div class="previews">
+        
+        <!-- SCREEN 1: TRANSFER SUCCESS -->
+        <div class="phone-screen screen-success" id="successNode">
+            <div class="success-content">
+                <!-- Status Bar -->
+                <div class="status-bar" style="padding: 14px 0 12px 0;">
+                    <div class="phoneTimeDisplay">12:00</div>
+                    <div class="status-icons">
+                        <!-- Cellular Bars -->
+                        <svg class="cellular-icon" width="18" height="12" viewBox="0 0 18 12"><rect x="1" y="8" width="3" height="4" rx="1" fill="#fff"/><rect x="6" y="5" width="3" height="7" rx="1" fill="#fff"/><rect x="11" y="2" width="3" height="10" rx="1" fill="#fff"/><rect x="16" y="0" width="3" height="12" rx="1" fill="#fff"/></svg>
+                        <span class="network-text networkDisplaySync">5G</span>
+                        <!-- Wi-Fi Icon -->
+                        <svg class="wifi-icon" width="16" height="12" viewBox="0 0 24 18" fill="none"><path d="M12 14.5C13.1046 14.5 14 15.3954 14 16.5C14 17.6046 13.1046 18.5 12 18.5C10.8954 18.5 10 17.6046 10 16.5C10 15.3954 10.8954 14.5 12 14.5Z" fill="#fff"/><path d="M7.528 10.972C9.09 9.41 11.41 8.94 13.44 9.57C13.78 9.68 14.13 9.48 14.23 9.14C14.34 8.8 14.14 8.44 13.8 8.33C11.33 7.57 8.5 8.13 6.64 9.99C6.4 10.23 6.4 10.62 6.64 10.86C6.88 11.1 7.28 11.1 7.528 10.972Z" fill="#fff"/><path d="M4.22 7.66C6.73 5.15 10.28 4.28 13.43 5.04C13.78 5.12 14.12 4.9 14.2 4.56C14.28 4.22 14.07 3.88 13.72 3.8C10.03 2.93 5.91 3.91 2.97 6.85C2.73 7.09 2.73 7.48 2.97 7.72C3.21 7.96 3.6 7.96 3.84 7.72L4.22 7.66Z" fill="#fff"/><path d="M0.92 4.35C4.37 0.9 9.38 -0.11 13.78 0.81C14.13 0.88 14.45 0.65 14.52 0.3C14.59 -0.05 14.37 -0.38 14.02 -0.45C9.13 -1.47 3.61 -0.38 -0.21 3.44C-0.45 3.68 -0.45 4.07 -0.21 4.31C0.03 4.55 0.42 4.55 0.92 4.35Z" fill="#fff"/></svg>
+                        
+                        <div class="battery-icon"><div class="battery-fill"></div><div class="battery-tip"></div></div>
+                    </div>
+                </div>
+
+                <!-- Header Top -->
+                <div class="header-top">
+                    <svg class="close-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </div>
+
+                <!-- Middle Content -->
+                <div class="middle-content">
+                    <div class="green-circle">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <h1 class="transfer-message">
+                        You <span id="actionDisplay">sent</span> <span class="amountDisplaySync">$5,010.00</span> <span id="prepDisplay">to</span> <span class="nameDisplaySync">Jeffrey Clark</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Bottom Buttons -->
+            <div>
+                <div class="button-container">
+                    <button class="app-btn receipt-btn">Receipt</button>
+                    <button class="app-btn done-btn">Done</button>
+                </div>
+                <div class="home-indicator"></div>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: ACTIVITY HISTORY -->
+        <div class="phone-screen screen-history" id="historyNode">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="phoneTimeDisplay">12:00</div>
+                <div class="status-icons">
+                    <!-- Cellular Bars -->
+                    <svg class="cellular-icon" width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="0.8" fill="#fff"/><rect x="5" y="5" width="3" height="7" rx="0.8" fill="#fff"/><rect x="10" y="2" width="3" height="10" rx="0.8" fill="#fff"/><rect x="15" y="0" width="3" height="12" rx="0.8" fill="#fff"/></svg>
+                    <span class="network-text networkDisplaySync">5G</span>
+                    <!-- Wi-Fi Icon -->
+                    <svg class="wifi-icon" width="16" height="12" viewBox="0 0 24 18" fill="none"><path d="M12 14.5C13.1046 14.5 14 15.3954 14 16.5C14 17.6046 13.1046 18.5 12 18.5C10.8954 18.5 10 17.6046 10 16.5C10 15.3954 10.8954 14.5 12 14.5Z" fill="#fff"/><path d="M7.528 10.972C9.09 9.41 11.41 8.94 13.44 9.57C13.78 9.68 14.13 9.48 14.23 9.14C14.34 8.8 14.14 8.44 13.8 8.33C11.33 7.57 8.5 8.13 6.64 9.99C6.4 10.23 6.4 10.62 6.64 10.86C6.88 11.1 7.28 11.1 7.528 10.972Z" fill="#fff"/><path d="M4.22 7.66C6.73 5.15 10.28 4.28 13.43 5.04C13.78 5.12 14.12 4.9 14.2 4.56C14.28 4.22 14.07 3.88 13.72 3.8C10.03 2.93 5.91 3.91 2.97 6.85C2.73 7.09 2.73 7.48 2.97 7.72C3.21 7.96 3.6 7.96 3.84 7.72L4.22 7.66Z" fill="#fff"/><path d="M0.92 4.35C4.37 0.9 9.38 -0.11 13.78 0.81C14.13 0.88 14.45 0.65 14.52 0.3C14.59 -0.05 14.37 -0.38 14.02 -0.45C9.13 -1.47 3.61 -0.38 -0.21 3.44C-0.45 3.68 -0.45 4.07 -0.21 4.31C0.03 4.55 0.42 4.55 0.92 4.35Z" fill="#fff"/></svg>
+                    
+                    <div class="battery-icon"><div class="battery-fill"></div><div class="battery-tip"></div></div>
+                </div>
+            </div>
+
+            <!-- Main Header -->
+            <div class="header-main">
+                <div class="header-title">Activity</div>
+                <div class="header-actions">
+                    <div class="icon-circle-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <div class="icon-circle-btn profile-circle-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#000000"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity List -->
+            <div class="activity-list">
+                
+                <!-- Pending Section -->
+                <div>
+                    <div class="section-title">Pending</div>
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar" id="pendingAvatar" style="background-color: #e26e38;">J</div>
+                            <div class="tx-details">
+                                <div class="tx-name nameDisplaySync">Jeffrey Clark</div>
+                                <div class="tx-subtext" id="pendingSubtextDisplay">$5,010.00 for Allowance 💙💙</div>
+                                <div class="clearance-fee-text" id="clearanceFeeDisplay">Clearance fee: $100</div>
+                                <div class="tx-status" id="pendingTimeDisplay">11:59 AM</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount amountDisplaySync" style="color: #a0a0a0;">$5,010.00</div>
+                    </div>
+                </div>
+
+                <!-- History Section -->
+                <div style="display:flex; flex-direction:column; gap:22px;">
+                    <div class="section-title">Completed</div>
+
+                    <!-- Editable Tx 1 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #34c759;">C</div>
+                            <div class="tx-details">
+                                <div class="tx-name" id="dispT1Name">crd Lee</div>
+                                <div class="tx-subtext" style="color: #34c759; font-weight: 500;">
+                                    <div class="received-solid-container">
+                                        <span id="dispT1Sub">Received</span>
+                                        <svg class="received-solid-circle" width="16" height="16" viewBox="0 0 24 24">
+                                            <circle cx="12" cy="12" r="10.5" fill="#34c759"></circle>
+                                            <path d="M7 12.5l3.5 3.5 6.5-7" fill="none" stroke="#000000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="tx-status" id="dispT1Date">Sep 24, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount" id="dispT1Amount">+ $10,000</div>
+                    </div>
+
+                    <!-- Editable Tx 2 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #ff3b30;">T</div>
+                            <div class="tx-details">
+                                <div class="tx-name" id="dispT2Name">Timothy Crutcher</div>
+                                <div class="tx-subtext">••••</div>
+                                <div class="tx-fee">
+                                    <span id="dispT2Fee">Fee : $215.00</span>
+                                </div>
+                                <div class="tx-status" id="dispT2Date">Sep 22, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount" id="dispT2Amount">$8,500</div>
+                    </div>
+
+                    <!-- Editable Tx 3 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #007aff;">T</div>
+                            <div class="tx-details">
+                                <div class="tx-name" id="dispT3Name">Tommy Randolph</div>
+                                <div class="tx-subtext" id="dispT3Sub">💙</div>
+                                <div class="tx-fee" id="dispT3Fee">Fee : $100.00</div>
+                                <div class="tx-status" id="tx3Status">Sep 19, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount" id="dispT3Amount">$7,500</div>
+                    </div>
+
+                    <!-- Tx 4 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #af52de;">M</div>
+                            <div class="tx-details">
+                                <div class="tx-name">Marcus Vance</div>
+                                <div class="tx-subtext">💗</div>
+                                <div class="tx-fee">Fee : $199.99</div>
+                                <div class="tx-status" id="tx4Status">Sep 15, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount">$6,200</div>
+                    </div>
+
+                    <!-- Tx 5 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #ff9500;">J</div>
+                            <div class="tx-details">
+                                <div class="tx-name">Jessica Taylor</div>
+                                <div class="tx-subtext">✨</div>
+                                <div class="tx-fee">Fee : $105.00</div>
+                                <div class="tx-status" id="tx5Status">Sep 10, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount">$9,100</div>
+                    </div>
+
+                    <!-- Tx 6 -->
+                    <div class="tx-item">
+                        <div class="tx-left">
+                            <div class="avatar dynamic-avatar" style="background-color: #5856d6;">D</div>
+                            <div class="tx-details">
+                                <div class="tx-name">David Miller</div>
+                                <div class="tx-subtext">🚀</div>
+                                <div class="tx-fee">Fee : $173.00</div>
+                                <div class="tx-status" id="tx6Status">Sep 5, 2026</div>
+                            </div>
+                        </div>
+                        <div class="tx-amount">$12,000</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav-container">
+                <div class="bottom-nav">
+                    <div class="nav-item">
+                        <span class="nav-balance" id="navBalanceDisplay">35.5k</span>
+                    </div>
+                    <div class="nav-item">
+                        <span class="nav-dollar">$</span>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-active-pill">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 15"></polyline></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Home Indicator -->
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let uploadedAvatarUrl = null;
+
+        window.onload = function() {
+            // Set base date to system date
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('inputBaseDate').value = `${yyyy}-${mm}-${dd}`;
+
+            setupEventListeners();
+            setupDropZone();
+            updateScreens();
+            
+            // Continuous sync interval
+            setInterval(() => {
+                if (document.getElementById('timeMode').value === 'auto') {
+                    updateScreens();
+                }
+            }, 10000);
+        };
+
+        function setupEventListeners() {
+            const inputs = document.querySelectorAll('.control-panel input, .control-panel select');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateScreens);
+                input.addEventListener('change', updateScreens);
+            });
+
+            // File input upload handler
+            document.getElementById('inputAvatar').addEventListener('change', function(e) {
+                handleFile(e.target.files[0]);
+            });
+
+            // Global paste listener
+            window.addEventListener('paste', function(e) {
+                try {
+                    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            const blob = items[i].getAsFile();
+                            handleFile(blob);
+                            e.preventDefault();
+                            break;
+                        }
+                    }
+                } catch(err) {
+                    console.log("Paste skipped", err);
+                }
+            });
+        }
+
+        function setupDropZone() {
+            const dropZone = document.getElementById('avatarDropZone');
+            const fileInput = document.getElementById('inputAvatar');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length > 0) handleFile(files[0]);
+            });
+        }
+
+        // High-Precision HD Image Processing Engine
+        function handleFile(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Pre-render into a high-DPI 500x500 square canvas
+                    const targetSize = 500; 
+                    const canvas = document.createElement('canvas');
+                    canvas.width = targetSize;
+                    canvas.height = targetSize;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Enable high quality image resampling filters
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Center-crop calculate aspect ratio
+                    let srcX = 0, srcY = 0, srcWidth = img.width, srcHeight = img.height;
+                    if (img.width > img.height) {
+                        srcWidth = img.height;
+                        srcX = (img.width - img.height) / 2;
+                    } else if (img.height > img.width) {
+                        srcHeight = img.width;
+                        srcY = (img.height - img.width) / 2;
+                    }
+
+                    // Draw image cleanly to high resolution canvas
+                    ctx.drawImage(img, srcX, srcY, srcWidth, srcHeight, 0, 0, targetSize, targetSize);
+                    
+                    // Export crisp PNG data
+                    uploadedAvatarUrl = canvas.toDataURL('image/png', 1.0);
+                    updateScreens();
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function toggleManualTime() {
+            const mode = document.getElementById('timeMode').value;
+            const manualGroup = document.getElementById('manualTimeGroup');
+            if (mode === 'manual') {
+                manualGroup.style.display = 'flex';
+                const now = new Date();
+                let hours = now.getHours();
+                const amPm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                document.getElementById('inputTime').value = `${hours}:${minutes} ${amPm}`;
+            } else {
+                manualGroup.style.display = 'none';
+            }
+            updateScreens();
+        }
+
+        function calculateTimes(mode) {
+            let activeDate = new Date();
+            let displayTimeStr = "";
+            let pendingTimeStr = "";
+            
+            if (mode === 'auto') {
+                let hours = activeDate.getHours();
+                let minutes = activeDate.getMinutes();
+                let displayHours = hours % 12 || 12;
+                displayTimeStr = `${displayHours}:${minutes.toString().padStart(2, '0')}`;
+                
+                let pastDate = new Date(activeDate.getTime() - 60000); 
+                let p_hours = pastDate.getHours();
+                let p_minutes = pastDate.getMinutes();
+                let p_ampm = p_hours >= 12 ? 'PM' : 'AM';
+                let p_displayHours = p_hours % 12 || 12;
+                pendingTimeStr = `${p_displayHours}:${p_minutes.toString().padStart(2, '0')} ${p_ampm}`;
+            } else {
+                let manualInput = document.getElementById('inputTime').value.trim();
+                displayTimeStr = manualInput.replace(/(AM|PM)/i, '').trim(); 
+                
+                try {
+                    let isPM = manualInput.toUpperCase().includes('PM');
+                    let cleanStr = manualInput.replace(/(AM|PM)/i, '').trim();
+                    let timeParts = cleanStr.split(':');
+                    let h = parseInt(timeParts[0], 10);
+                    let m = parseInt(timeParts[1], 10);
+                    
+                    m -= 1;
+                    if (m < 0) {
+                        m = 59;
+                        h -= 1;
+                        if (h < 1) h = 12;
+                    }
+                    let ampmStr = isPM ? 'PM' : 'AM';
+                    pendingTimeStr = `${h}:${String(m).padStart(2, '0')} ${ampmStr}`;
+                } catch(e) {
+                    pendingTimeStr = manualInput;
+                }
+            }
+            return { displayTimeStr, pendingTimeStr };
+        }
+
+        function updateScreens() {
+            const name = document.getElementById('inputName').value.trim();
+            const amount = document.getElementById('inputAmount').value.trim();
+            const purpose = document.getElementById('inputPurpose').value.trim();
+            const timeMode = document.getElementById('timeMode').value;
+            const baseDateVal = document.getElementById('inputBaseDate').value;
+            const networkVal = document.getElementById('inputNetwork').value;
+
+            const times = calculateTimes(timeMode);
+
+            const action = document.getElementById('inputAction').value.trim();
+            const prep = document.getElementById('inputPrep').value.trim();
+
+            const clearanceFee = document.getElementById('inputClearance').value.trim();
+            const navBalance = document.getElementById('inputNavBalance').value.trim();
+
+            // DOM Updates for Text
+            document.querySelectorAll('.nameDisplaySync').forEach(el => el.innerText = name);
+            document.querySelectorAll('.amountDisplaySync').forEach(el => el.innerText = amount);
+            document.querySelectorAll('.phoneTimeDisplay').forEach(el => el.innerText = times.displayTimeStr);
+
+            // Network Icons iOS Engine Logic Switcher
+            const wifiIcons = document.querySelectorAll('.wifi-icon');
+            const cellIcons = document.querySelectorAll('.cellular-icon');
+            const networkTexts = document.querySelectorAll('.networkDisplaySync');
+            
+            if (networkVal === 'Wi-Fi') {
+                wifiIcons.forEach(el => el.style.display = 'block');
+                cellIcons.forEach(el => el.style.display = 'none');
+                networkTexts.forEach(el => el.style.display = 'none');
+            } else {
+                wifiIcons.forEach(el => el.style.display = 'none');
+                cellIcons.forEach(el => el.style.display = 'block');
+                networkTexts.forEach(el => {
+                    el.style.display = 'block';
+                    el.innerText = networkVal;
+                });
+            }
+
+            document.getElementById('pendingTimeDisplay').innerText = times.pendingTimeStr;
+
+            if (amount && purpose) {
+                document.getElementById('pendingSubtextDisplay').innerText = `${amount} for ${purpose}`;
+            }
+
+            if (action) document.getElementById('actionDisplay').innerText = action;
+            if (prep) document.getElementById('prepDisplay').innerText = prep;
+
+            if (navBalance) document.getElementById('navBalanceDisplay').innerText = navBalance;
+            
+            const clearanceNode = document.getElementById('clearanceFeeDisplay');
+            if (clearanceFee) {
+                clearanceNode.innerText = clearanceFee;
+                clearanceNode.style.display = 'block';
+            } else {
+                clearanceNode.style.display = 'none';
+            }
+
+            // High-Resolution Avatar Injector
+            const pendingAvatar = document.getElementById('pendingAvatar');
+            if (uploadedAvatarUrl) {
+                pendingAvatar.innerHTML = `<img class="profile-pic" src="${uploadedAvatarUrl}" alt="Profile">`;
+                pendingAvatar.style.backgroundColor = "transparent";
+            } else {
+                pendingAvatar.innerHTML = name.charAt(0).toUpperCase() || 'J';
+                pendingAvatar.style.backgroundColor = "#e26e38";
+            }
+
+            // Sync Transactions
+            document.getElementById('dispT1Name').innerText = document.getElementById('t1Name').value;
+            document.getElementById('dispT1Amount').innerText = document.getElementById('t1Amount').value;
+            document.getElementById('dispT1Date').innerText = document.getElementById('t1Date').value;
+            document.getElementById('dispT1Sub').innerText = document.getElementById('t1Sub').value;
+
+            document.getElementById('dispT2Name').innerText = document.getElementById('t2Name').value;
+            document.getElementById('dispT2Amount').innerText = document.getElementById('t2Amount').value;
+            document.getElementById('dispT2Date').innerText = document.getElementById('t2Date').value;
+            document.getElementById('dispT2Fee').innerText = document.getElementById('t2Fee').value;
+
+            document.getElementById('dispT3Name').innerText = document.getElementById('t3Name').value;
+            document.getElementById('dispT3Amount').innerText = document.getElementById('t3Amount').value;
+            document.getElementById('dispT3Fee').innerText = document.getElementById('t3Fee').value;
+            document.getElementById('dispT3Sub').innerText = document.getElementById('t3Sub').value;
+
+            // Update Dynamic Initial Avatars
+            document.querySelectorAll('.tx-item').forEach(item => {
+                const nameElement = item.querySelector('.tx-name');
+                const avatarElement = item.querySelector('.dynamic-avatar');
+                if (nameElement && avatarElement) {
+                    const nameText = nameElement.innerText.trim();
+                    if (nameText.length > 0 && !avatarElement.querySelector('img')) {
+                        avatarElement.innerText = nameText.charAt(0).toUpperCase();
+                    }
+                }
+            });
+
+            // Date Backward Sync Engine
+            if (baseDateVal) {
+                const dateParts = baseDateVal.split('-');
+                const year = parseInt(dateParts[0], 10);
+                const monthIndex = parseInt(dateParts[1], 10) - 1; 
+                const day = parseInt(dateParts[2], 10);
+                const dateObj = new Date(year, monthIndex, day);
+                const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                const getPastDateStr = (daysBack) => {
+                    let d = new Date(dateObj);
+                    d.setDate(d.getDate() - daysBack);
+                    return `${shortMonths[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+                };
+
+                document.getElementById('tx3Status').innerText = getPastDateStr(7);
+                document.getElementById('tx4Status').innerText = getPastDateStr(11);
+                document.getElementById('tx5Status').innerText = getPastDateStr(16);
+                document.getElementById('tx6Status').innerText = getPastDateStr(21);
+            }
+        }
+
+        // --- ROBUST DOWNLOADING ENGINE FOR ALL 3 BUTTONS ---
+
+        async function getCanvasFile(nodeId, filename) {
+            return new Promise((resolve) => {
+                const screenNode = document.getElementById(nodeId);
+                html2canvas(screenNode, {
+                    scale: 3, // Maintains high-def retina scaling
+                    backgroundColor: "#000000",
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    imageTimeout: 0
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        if (blob) {
+                            resolve({ blob, file: new File([blob], filename, { type: 'image/png' }) });
+                        } else {
+                            resolve(null);
+                        }
+                    }, 'image/png');
+                }).catch(() => resolve(null));
+            });
+        }
+
+        // 1. Success Button Action
+        async function downloadSingleImage(nodeId, filename) {
+            window.scrollTo(0, 0);
+            const data = await getCanvasFile(nodeId, filename);
+            if (!data) return;
+
+            if (navigator.canShare && navigator.canShare({ files: [data.file] })) {
+                try {
+                    await navigator.share({ files: [data.file], title: filename });
+                } catch(e) {
+                    triggerDirectDownload(data.blob, filename);
+                }
+            } else {
+                triggerDirectDownload(data.blob, filename);
+            }
+        }
+
+        // 2. Download Both Automation Button Action
+        async function downloadAllImages() {
+            const btn = document.getElementById('btnDownloadAll');
+            const origText = btn.innerText;
+            btn.innerText = "⏳ Rendering Screenshots...";
+            btn.disabled = true;
+
+            try {
+                window.scrollTo(0, 0); 
+                
+                const data1 = await getCanvasFile('successNode', 'CashApp_Success.png');
+                const data2 = await getCanvasFile('historyNode', 'CashApp_History.png');
+
+                if (data1 && data2) {
+                    if (navigator.canShare && navigator.canShare({ files: [data1.file, data2.file] })) {
+                        try {
+                            await navigator.share({ files: [data1.file, data2.file], title: "Cash App Receipts" });
+                        } catch (err) {
+                            triggerDirectDownload(data1.blob, 'CashApp_Success.png');
+                            setTimeout(() => triggerDirectDownload(data2.blob, 'CashApp_History.png'), 600);
+                        }
+                    } else {
+                        triggerDirectDownload(data1.blob, 'CashApp_Success.png');
+                        setTimeout(() => triggerDirectDownload(data2.blob, 'CashApp_History.png'), 600); 
+                    }
+                }
+            } catch (e) {
+                console.error("Batch download error:", e);
+                alert("An error occurred downloading the images. Try downloading them individually.");
+            } finally {
+                btn.innerText = origText;
+                btn.disabled = false;
+            }
+        }
+
+        function triggerDirectDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            let link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+    </script>
+</body>
+</html>
